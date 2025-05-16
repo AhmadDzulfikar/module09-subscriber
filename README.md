@@ -14,4 +14,13 @@ Secara keseluruhan, guest:guest@localhost:5672 berarti aplikasi Anda akan menghu
 ![image](https://github.com/user-attachments/assets/91ed9529-6436-4c40-882f-5e08d78ed201)
 ![image](https://github.com/user-attachments/assets/0ad7faf9-5655-4fb6-80da-7155473e500c)
 
+Dilihat dari grafik RabbitMQ di atas, jumlah pesan yang berada dalam antrean (queued messages) mencapai 15. Hal ini terjadi karena saya menjalankan perintah cargo run pada publisher sebanyak 4 kali berturut-turut. Setiap kali publisher dijalankan, mengirimkan 5 pesan sekaligus. Dengan adanya jeda waktu menggunakan thread::sleep(ten_millis);, maka secara total akan ada sekitar (4-1) * 5 pesan yang menumpuk dan belum diproses dalam antrean. Kondisi ini menggambarkan bahwa pesan yang dikirim lebih cepat dibandingkan kecepatan pemrosesan oleh subscriber.
 
+
+### Simulation Many Subscriber
+
+![image](https://github.com/user-attachments/assets/64446583-ed78-4c18-b515-dab74d1441a4)
+
+![image](https://github.com/user-attachments/assets/e14974d0-77ed-4869-a203-50d881a4cc01)
+
+Jika kita lihat disini message queue lebih cepat dari sebelumnya yang mana sebelumnya itu 10, tapi sekarang hanya 2. Terjadi karena penerbitan pesan secara bertubi-tubi oleh publisher sementara beberapa subscriber sedang memproses pesan. Publisher dan subscriber sama-sama aktif dalam waktu hampir bersamaan, namun kecepatan pengiriman pesan dari publisher melebihi kemampuan pemrosesan subscriber.
